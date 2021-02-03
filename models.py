@@ -106,14 +106,15 @@ class WideResNet(nn.Module):
         assert((depth - 4) % 6 == 0)
         super(WideResNet, self).__init__()
     
-        # 1st conv before any network block
-        self.conv1 = nn.Conv2d(3, nChannels[0], kernel_size=3, stride=1,
-                               padding=1, bias=False)
         
         n = (depth - 4) / 6
         block = BasicBlock
         strides = [stride, 2, 2]
         nChannels = [16, 16*widen_factor, 32*widen_factor, 64*widen_factor]
+
+        # 1st conv before any network block
+        self.conv1 = nn.Conv2d(3, nChannels[0], kernel_size=3, stride=1,
+                               padding=1, bias=False)
 
         self.blocks = nn.ModuleList()
         for i in range(3):

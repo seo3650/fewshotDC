@@ -1,2 +1,11 @@
 .vscode/
 __pycache__
+filelists/CUB/CUB_200_2011
+filelists/CUB/CUB_200_2011.tgz
+filelists/CUB/www.vision.caltech.edu/
+filelists/CUB/val.json
+filelists/CUB/novel.json
+filelists/CUB/base.json
+filelists/CUB/attributes.txt
+checkpoints/CUB/WideResNet28_10_S2M2_R/*
+main.ipynb

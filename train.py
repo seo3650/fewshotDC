@@ -15,12 +15,13 @@ import torchvision.transforms as transforms
 from torch.autograd import Variable
 
 from models import wrn28_10
-from io_utils import parse_args
+from io_utils import parse_args, get_resume_file
 from configs import save_dir, data_dir
 from data.datamgr import SimpleDataManager
 
 image_size = 84
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+print('Using device: ' + str(device))
 
 def test_s2m2(base_loader_test, model, criterion):
     model.eval()
@@ -36,7 +37,7 @@ def test_s2m2(base_loader_test, model, criterion):
             total += targets.size(0)
             correct += predicted.eq(targets.data).cpu().sum()
 
-            print('Loss: %.3f | Acc: %.3f%%' % (test_loss/(batch_idx+1), 100.*correct/total)) 
+            # print('Loss: %.3f | Acc: %.3f%%' % (test_loss/(batch_idx+1), 100.*correct/total)) 
 
 def train_s2m2(base_loader, base_loader_test, model, params, tmp):
 
@@ -59,6 +60,15 @@ def train_s2m2(base_loader, base_loader_test, model, params, tmp):
             ])
     
     start_epoch, stop_epoch = params.start_epoch, params.start_epoch+params.stop_epoch
+
+    if params.resume:
+        checkpoint = get_resume_file(params.checkpoint_dir)
+        print('resumefile: {}'.format(checkpoint))
+        checkpoint = torch.load(checkpoint, map_location=device)
+        model.load_state_dict(checkpoint['state'])
+        start_epoch = checkpoint['epoch']
+        print('Model loaded')
+
     print("stop_epoch", start_epoch, stop_epoch)
 
     for epoch in range(start_epoch, stop_epoch):
@@ -126,6 +136,7 @@ def train_s2m2(base_loader, base_loader_test, model, params, tmp):
 
             outfile = os.path.join(params.checkpoint_dir, '{:d}.tar'.format(epoch))
             torch.save({'epoch':epoch, 'state':model.state_dict() }, outfile)
+            print('Model saved')
 
         test_s2m2(base_loader_test, model, criterion)  
 
