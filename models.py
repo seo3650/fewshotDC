@@ -146,6 +146,7 @@ class WideResNet(nn.Module):
                 m.bias.data.zero_()
     
     def forward(self, x, target= None, mixup=False, mixup_hidden=True, mixup_alpha=None , lam = 0.4):
+        # x: (batch_size, 3, image_size, image_size)
         if target is not None: 
             if mixup_hidden:
                 layer_mix = random.randint(0,3)
@@ -180,8 +181,8 @@ class WideResNet(nn.Module):
                 out = self.blocks[i](out)
             out = self.relu(self.bn1(out))
             out = F.avg_pool2d(out, out.size()[2:])
-            out = out.view(out.size(0), -1)
-            out1 = self.linear(out)
+            out = out.view(out.size(0), -1) # (batch_size, dimension: 640)
+            out1 = self.linear(out) # (batch_size, class_num)
 
             return out, out1
         

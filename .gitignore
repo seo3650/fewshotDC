@@ -9,3 +9,4 @@ filelists/CUB/base.json
 filelists/CUB/attributes.txt
 checkpoints/CUB/WideResNet28_10_S2M2_R/*
 main.ipynb
+cache/
